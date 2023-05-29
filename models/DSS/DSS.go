@@ -1,4 +1,4 @@
-package models
+package DSS
 
 type DSS struct {
 	Id1 struct {

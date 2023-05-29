@@ -1,7 +1,7 @@
-package middlewares
+package DSS
 
 import (
-	"github.com/Roh-Bot/Backend/models"
+	"github.com/Roh-Bot/Backend/models/DSS"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -10,7 +10,7 @@ import (
 func DSSMiddleware(context echo.Context) error {
 
 	v := validator.New()
-	var dss models.DSS
+	var dss DSS.DSS
 
 	if err := context.Bind(&dss); err != nil {
 		return context.String(http.StatusInternalServerError, "Binding Error")
