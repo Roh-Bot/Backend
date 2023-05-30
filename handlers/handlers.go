@@ -14,7 +14,7 @@ func Start() {
 	router := echo.New()
 	router.GET("/", middlewares.DefaultPageMiddleware)
 	router.POST("strategy/dss", DSS.DSSMiddleware)
-	router.POST("/register", Registration.RegistrationController)
+	router.POST("/register", Registration.RegistrationMiddleware)
 	router.POST("/login", Login.LoginController)
 	router.GET("/home", Authentication.Home)
 	router.POST("/loginAuth", Authentication.Login)

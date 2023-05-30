@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/Roh-Bot/Backend/models/Registration"
+	"github.com/Roh-Bot/Backend/utils"
 	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
@@ -17,7 +18,7 @@ const ConnectString = `host=localhost port=5432 user=postgres password=admin dbn
 
 var register Registration.RegistrationStruct
 
-func RegistrationController(c echo.Context) error {
+func RegistrationMiddleware(c echo.Context) error {
 	pool, err := pgxpool.New(context.Background(), ConnectString)
 	if err != nil {
 		fmt.Println("Connection Failed")
@@ -65,6 +66,8 @@ func RegistrationController(c echo.Context) error {
 	hashedPassword := sha256.Sum256(bytePassword)
 	stringHash := hex.EncodeToString(hashedPassword[:])
 	fmt.Println(stringHash)
+
+	utils.EmailMagicLink()
 
 	if CheckIfEmailExists() {
 		return c.String(404, "Email already exists")

@@ -46,7 +46,6 @@ func Login(context echo.Context) error {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err2 := token.SignedString(jwtKey)
-
 	if err2 != nil {
 		return context.NoContent(http.StatusInternalServerError)
 	}
