@@ -1,10 +1,6 @@
 package utils
 
 import (
-	"context"
-	"fmt"
-	"github.com/Roh-Bot/Backend/middlewares/Registration"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -34,15 +30,15 @@ const (
 )
 
 func Logger(c echo.Context, ReqRes string, level zapcore.Level) {
-	pool, err := pgxpool.New(context.Background(), Registration.ConnectString)
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println("Connection Failed")
-	}
-
-	errPing := pool.Ping(context.Background())
-	if errPing != nil {
-		fmt.Println(err)
-		fmt.Println("")
-	}
+	//pool, err := pgxpool.New(context.Background(), Registration.ConnectString)
+	//if err != nil {
+	//	fmt.Println(err)
+	//	fmt.Println("Connection Failed")
+	//}
+	//
+	//errPing := pool.Ping(context.Background())
+	//if errPing != nil {
+	//	fmt.Println(err)
+	//	fmt.Println("")
+	//}
 }

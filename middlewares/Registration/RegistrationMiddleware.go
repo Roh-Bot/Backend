@@ -67,9 +67,8 @@ func RegistrationMiddleware(c echo.Context) error {
 	stringHash := hex.EncodeToString(hashedPassword[:])
 	fmt.Println(stringHash)
 
-	utils.EmailMagicLink()
-
 	if CheckIfEmailExists() {
+		utils.EmailMagicLink()
 		return c.String(404, "Email already exists")
 	}
 	pgCallStatement := `CALL registration($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`

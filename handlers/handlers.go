@@ -15,6 +15,7 @@ func Start() {
 	router.GET("/", middlewares.DefaultPageMiddleware)
 	router.POST("strategy/dss", DSS.DSSMiddleware)
 	router.POST("/register", Registration.RegistrationMiddleware)
+	router.GET("/verifylink", Registration.Verification)
 	router.POST("/login", Login.LoginController)
 	router.GET("/home", Authentication.Home)
 	router.POST("/loginAuth", Authentication.Login)
