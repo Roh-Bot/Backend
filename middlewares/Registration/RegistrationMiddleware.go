@@ -19,17 +19,7 @@ const ConnectString = `host=localhost port=5432 user=postgres password=admin dbn
 var register Registration.RegistrationStruct
 
 func RegistrationMiddleware(c echo.Context) error {
-	pool, err := pgxpool.New(context.Background(), ConnectString)
-	if err != nil {
-		fmt.Println("Connection Failed")
-	}
-
-	errPing := pool.Ping(context.Background())
-	if errPing != nil {
-		log.Fatal(fmt.Println("Connection failed to Databse"))
-	} else {
-		fmt.Println("DB Connected")
-	}
+	pool := utils.PostgresConnectionPool()
 
 	v := validator.New()
 
@@ -53,11 +43,11 @@ func RegistrationMiddleware(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Invalid Input")
 	}
 
-	pgCheckIfUserExists := `SELECT email FROM users WHERE email='Dhebug@God.com'`
+	pgCheckIfUserExists := `SELECT email FROM users WHERE email='$1'`
 	var email string
-	errScan := pool.QueryRow(context.Background(), pgCheckIfUserExists).Scan(email)
+	errScan := pool.QueryRow(context.Background(), pgCheckIfUserExists, register.Email).Scan(email)
 	if errScan != nil {
-		fmt.Println(err)
+		fmt.Println(errScan)
 		fmt.Println("Scanning Error")
 	}
 	fmt.Println(email)
@@ -68,32 +58,33 @@ func RegistrationMiddleware(c echo.Context) error {
 	fmt.Println(stringHash)
 
 	if CheckIfEmailExists() {
-		utils.EmailMagicLink()
 		return c.String(404, "Email already exists")
-	}
-	pgCallStatement := `CALL registration($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`
-	data := []any{register.Email, register.Phone_no, stringHash, register.First_name,
-		register.Last_name, register.Dob, register.Address_line_1, register.Address_line_2,
-		register.City_id, register.State_id, register.Pincode, register.Referred_by,
-		register.Reference_code}
-
-	_, errQuery := pool.Query(context.Background(), pgCallStatement, data...)
-	if errQuery != nil {
-		fmt.Println(errQuery)
-		return c.String(http.StatusInternalServerError, "Query Failed")
 	} else {
-		fmt.Println("Query Successful")
-	}
+		pgCallStatement := `CALL registration($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`
+		data := []any{register.Email, register.Phone_no, stringHash, register.First_name,
+			register.Last_name, register.Dob, register.Address_line_1, register.Address_line_2,
+			register.City_id, register.State_id, register.Pincode, register.Referred_by,
+			register.Reference_code}
 
-	response = Registration.RegistrationResponse{
-		StatusCode: 200,
-		Error:      map[string]string{},
-		Data: map[string]string{
-			"user": "01",
-		},
-	}
-	return c.JSON(http.StatusOK, response)
+		_, errQuery := pool.Query(context.Background(), pgCallStatement, data...)
+		if errQuery != nil {
+			fmt.Println(errQuery)
+			return c.String(http.StatusInternalServerError, "Query Failed")
+		} else {
+			fmt.Println("Query Successful")
+		}
 
+		response = Registration.RegistrationResponse{
+			StatusCode: 200,
+			Error:      map[string]string{},
+			Data: map[string]string{
+				"user": "01",
+			},
+		}
+		utils.EmailMagicLink()
+		return c.JSON(http.StatusOK, response)
+
+	}
 }
 
 func CheckIfEmailExists() bool {

@@ -6,5 +6,5 @@ import (
 )
 
 func DefaultPageMiddleware(context echo.Context) error {
-	return context.String(http.StatusOK, "default Page")
+	return context.String(http.StatusOK, "Registered Successfully")
 }
