@@ -14,14 +14,15 @@ func Verification(context echo.Context) error {
 		return context.String(http.StatusOK, "Time Expired")
 	}
 	pool := utils.PostgresConnectionPool()
-	_, err := pool.Query(context2.Background(), `UPDATE users SET is_email_verified=true WHERE email=$1`, register.Email)
+	_, err := pool.Query(context2.Background(), `UPDATE users SET is_email_verified=true WHERE email=$1`, Register.Email)
 	if err != nil {
 		fmt.Println("Query unsuccessful:", err)
 	} else {
 		fmt.Println("Query Successful")
 	}
 
-	return context.Redirect(http.StatusFound, "http://localhost:8080/")
+	fmt.Println(Register.User_Id)
+	return context.Redirect(http.StatusFound, "http://localhost:8080/") // ConfigChange := url in config
 
 }
 

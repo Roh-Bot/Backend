@@ -6,6 +6,7 @@ import (
 	"github.com/Roh-Bot/Backend/middlewares/DSS"
 	"github.com/Roh-Bot/Backend/middlewares/Login"
 	"github.com/Roh-Bot/Backend/middlewares/Registration"
+	"github.com/Roh-Bot/Backend/middlewares/SessionHandling"
 	"github.com/labstack/echo/v4"
 	"log"
 )
@@ -20,5 +21,6 @@ func Start() {
 	router.GET("/home", Authentication.Home)
 	router.POST("/loginAuth", Authentication.Login)
 	router.POST("/refresh", Authentication.Refresh)
+	router.POST("/signin", SessionHandling.Signin)
 	log.Fatal(router.Start("localhost:8080"))
 }

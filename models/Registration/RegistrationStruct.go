@@ -17,6 +17,7 @@ type RegistrationStruct struct {
 	Pincode        int       `json:"pincode" validate:"required"`
 	Referred_by    int       `json:"referred_by"`
 	Reference_code int       `json:"reference_code"`
+	User_Id        int
 }
 
 type RegistrationResponse struct {
@@ -24,3 +25,5 @@ type RegistrationResponse struct {
 	Error      map[string]string
 	Data       map[string]string
 }
+
+var Register RegistrationStruct
