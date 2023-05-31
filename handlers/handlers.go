@@ -4,6 +4,7 @@ import (
 	"github.com/Roh-Bot/Backend/middlewares"
 	"github.com/Roh-Bot/Backend/middlewares/Authentication"
 	"github.com/Roh-Bot/Backend/middlewares/DSS"
+	"github.com/Roh-Bot/Backend/middlewares/GoogleOAuthSignin"
 	"github.com/Roh-Bot/Backend/middlewares/Login"
 	"github.com/Roh-Bot/Backend/middlewares/Registration"
 	"github.com/Roh-Bot/Backend/middlewares/SessionHandling"
@@ -21,6 +22,8 @@ func Start() {
 	router.GET("/home", Authentication.Home)
 	router.POST("/loginAuth", Authentication.Login)
 	router.POST("/refresh", Authentication.Refresh)
-	router.POST("/signin", SessionHandling.Signin)
-	log.Fatal(router.Start("localhost:8080"))
+	router.POST("/loginSession", SessionHandling.Signin)
+	router.GET("/signin", GoogleOAuthSignin.Signin)
+	router.GET("/callback", GoogleOAuthSignin.HandleGoogleCallback)
+	log.Fatal(router.Start("localhost:8000"))
 }
