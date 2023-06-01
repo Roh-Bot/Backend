@@ -2,8 +2,6 @@ package Registration
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"github.com/Roh-Bot/Backend/models/Registration"
 	"github.com/Roh-Bot/Backend/utils"
@@ -50,16 +48,14 @@ func RegistrationMiddleware(c echo.Context) error {
 	}
 	fmt.Println(email)
 
-	var bytePassword = []byte(Register.Password)
-	hashedPassword := sha256.Sum256(bytePassword)
-	stringHash := hex.EncodeToString(hashedPassword[:])
-	fmt.Println(stringHash)
+	passwordHash := utils.SHA256(Register.Password)
+	fmt.Println(passwordHash)
 
-	if CheckIfEmailExists() {
+	if utils.CheckIfEmailExists(Register.Email) {
 		return c.String(404, "Email already exists")
 	} else {
 		pgCallStatement := `CALL registration($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`
-		data := []any{Register.Email, Register.Phone_no, stringHash, Register.First_name,
+		data := []any{Register.Email, Register.Phone_no, passwordHash, Register.First_name,
 			Register.Last_name, Register.Dob, Register.Address_line_1, Register.Address_line_2,
 			Register.City_id, Register.State_id, Register.Pincode, Register.Referred_by,
 			Register.Reference_code}
@@ -84,23 +80,4 @@ func RegistrationMiddleware(c echo.Context) error {
 		return c.JSON(http.StatusOK, response)
 
 	}
-}
-
-func CheckIfEmailExists() bool {
-	pool := utils.PostgresConnectionPool()
-
-	//pgCheckIfUserExists := `SELECT email FROM users WHERE email='Dhebug@God.com'`
-	var email string
-	row := pool.QueryRow(context.Background(), `SELECT email FROM users where email=$1`, Register.Email)
-
-	errScan := row.Scan(&email)
-	if errScan != nil {
-		fmt.Println(errScan)
-	}
-
-	if email != "" {
-		return true
-	}
-	return false
-
 }

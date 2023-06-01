@@ -15,63 +15,35 @@ var users = map[string]string{
 
 var sessions = map[string]session{}
 
-// each session contains the username of the user and the time at which it expires
 type session struct {
-	username string
+	username int
 	expiry   time.Time
 }
 
-// we'll use this method later to determine if the session has expired
 func (s session) isExpired() bool {
 	return s.expiry.Before(time.Now())
 }
 
-// Create a struct that models the structure of a user in the request body
 type Credentials struct {
 	Password string `json:"password"`
 	Username string `json:"username"`
 }
 
-func Signin(context echo.Context) error {
-	var creds Credentials
-	// Get the JSON body and decode into credentials
-	if err := context.Bind(&creds); err != nil {
-		fmt.Println("Binding Error")
-		return context.String(http.StatusBadRequest, "Invalid Input")
-
-	}
-
-	// Get the expected password from our in memory map
-	expectedPassword, ok := users[creds.Username]
-
-	// If a password exists for the given user
-	// AND, if it is the same as the password we received, the we can move ahead
-	// if NOT, then we return an "Unauthorized" status
-	if !ok || expectedPassword != creds.Password {
-		return context.NoContent(http.StatusUnauthorized)
-
-	}
-
-	// Create a new random session token
-	// we use the "github.com/google/uuid" library to generate UUIDs
+func Signin(context echo.Context, user_id int) error {
 	sessionToken := uuid.NewString()
 	expiresAt := time.Now().Add(120 * time.Second)
 
-	// Set the token in the session map, along with the session information
 	sessions[sessionToken] = session{
-		username: creds.Username, //DbChange := userid
+		username: user_id,
 		expiry:   expiresAt,
 	}
-
-	// Finally, we set the client cookie for "session_token" as the session token we just generated
-	// we also set an expiry time of 120 seconds
 
 	context.SetCookie(&http.Cookie{
 		Name:    "GMsession_token",
 		Value:   sessionToken,
 		Expires: expiresAt,
 	})
-	return context.String(200, "Signin Succesful")
+	return fmt.Errorf("hello")
 }
 
 func Welcome(context echo.Context) error {
